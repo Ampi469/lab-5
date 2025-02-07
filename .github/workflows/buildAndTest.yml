@@ -1,0 +1,21 @@
+name: BuildAndTest
+
+on:
+  push:
+    paths:
+      - '**.java'
+  pull_request:
+    paths:
+      - '**.java'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: gradle:8.8-jdk21-alpine
+    steps:
+      - name: Check out the repository to the runner
+        uses: actions/checkout@v4
+      - name: Build
+        run: gradle build
+      - name: Test
+        run: gradle test
