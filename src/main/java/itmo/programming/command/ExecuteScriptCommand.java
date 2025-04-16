@@ -84,7 +84,7 @@ public class ExecuteScriptCommand implements BaseCommand {
                             return statusCode;
                         }
                     } else {
-                        console.printErr("Такой команды не существует!");
+                        console.printErr("Такой команды не существует");
                         return 1;
                     }
                 }
@@ -92,6 +92,7 @@ public class ExecuteScriptCommand implements BaseCommand {
             ScriptManager.removeFromStack();
             ScannerManager.setScanner(new Scanner(System.in));
         } catch (NoSuchElementException e) {
+            console.printErr("Элемент не найден");
             return 1;
         } catch (FileNotFoundException e) {
             console.printErr(e.getMessage());
