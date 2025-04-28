@@ -30,7 +30,7 @@ public class CollectionManager {
      * Коллекция.
      */
     private final PriorityQueue<Ticket> collection = new PriorityQueue<>(
-            Comparator.comparingLong(Ticket::getSumCoordinates)
+            Comparator.comparingLong(Ticket::getId)
     );
 
     /**

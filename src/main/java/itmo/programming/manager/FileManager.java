@@ -54,7 +54,6 @@ public class FileManager {
     public boolean canReadFile(File file, ConsoleManager console) {
         if (!file.exists()) {
             console.printErr("Файл не найден");
-            System.exit(1);
             return false;
         }
         if (!file.canRead()) {
@@ -97,12 +96,10 @@ public class FileManager {
 
             } catch (IOException e) {
                 console.printErr("Файл не может быть открыт");
-                System.exit(1);
                 return false;
             }
         } else {
             console.printErr("Файла по пути '" + envPath + "' не существует");
-            System.exit(1);
             return false;
         }
     }
@@ -153,32 +150,25 @@ public class FileManager {
                             console.printErr(
                                     "В файле содержится коллекция в недопустимом формате!"
                             );
-                            System.exit(1);
                         }
                     }
                     console.println("Коллекция по адресу: " + envPath + " загружена!");
                 } else {
                     console.printErr("В файле содержится коллекция в недопустимом формате!");
-                    System.exit(1);
                 }
 
             } catch (FileNotFoundException e) {
                 console.printErr("Файла не существует");
-                System.exit(1);
             } catch (JsonParseException e) {
                 console.printErr("В файле нет коллекции нужного вида");
-                System.exit(1);
             } catch (IOException e) {
                 console.printErr("Непредвиденная ошибка");
-                System.exit(1);
             } catch (NullPointerException e) {
                 console.printErr("Файл не найден");
-                System.exit(1);
             }
 
         } else {
             console.printErr("Файл не найден");
-            System.exit(1);
         }
     }
 }

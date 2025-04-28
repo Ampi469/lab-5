@@ -74,8 +74,6 @@ public class RuntimeManager {
                 }
             } catch (NoSuchElementException e) {
                 System.exit(0);
-            } catch (NullPointerException e) {
-                consoleManager.printErr("Не найден элемент");
             }
         }
 
