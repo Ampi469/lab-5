@@ -50,12 +50,12 @@ public class ExecuteScriptCommand implements BaseCommand {
 
         if (envPath == null || envPath.isEmpty()) {
             console.printErr("Переменная окружения JAVA_PATH не задана или пуста!");
-            return 1;
+            return 0;
         }
 
         final File file = new File(envPath);
         if (!fileManager.canReadFile(file, console)) {
-            return 1;
+            return 0;
         }
 
         try {
@@ -63,7 +63,22 @@ public class ExecuteScriptCommand implements BaseCommand {
             Scanner scannerManager;
             while ((scannerManager = ScriptManager.getLastScanner()) != null) {
                 ScannerManager.setScanner(scannerManager);
-                final String line = scannerManager.nextLine();
+                if (!scannerManager.hasNextLine()) {
+                    ScriptManager.addToStack(envPath);
+                    ScannerManager.setScanner(new Scanner(System.in));
+                    return 0;
+                }
+                final String line;
+                try {
+                    line = scannerManager.nextLine().trim();
+                } catch (NoSuchElementException eof) {
+                    ScriptManager.removeFromStack();
+                    ScannerManager.setScanner(new Scanner(System.in));
+                    continue;
+                }
+                if (line.isEmpty()) {
+                    continue;
+                }
                 final String[] command = line.trim().split(" ");
                 if (command[0].equalsIgnoreCase(
                         "execute_script") && ScriptManager.isRecursive(command[1])
@@ -74,37 +89,42 @@ public class ExecuteScriptCommand implements BaseCommand {
                     );
                     continue;
                 }
-                if (!Objects.equals(command[0], "")) {
+                if (!(Objects.equals(command[0], ""))) {
                     console.println("Выполнение команды " + command[0] + " (" + envPath + "):");
                     if (commandManager.getCommands().get(command[0]) != null) {
                         final var statusCode = commandManager.executeCommand(command[0],
                                 Arrays.copyOfRange(command, 1, command.length));
                         if (statusCode != 0) {
-                            ScriptManager.removeFromStack();
                             return statusCode;
                         }
                     } else {
-                        console.printErr("Такой команды не существует");
+                        console.printErr("Такой команды нет");
+                        ScriptManager.removeFromStack();
+                        ScannerManager.setScanner(new Scanner(System.in));
                         return 1;
                     }
                 }
             }
             ScriptManager.removeFromStack();
             ScannerManager.setScanner(new Scanner(System.in));
-        } catch (NoSuchElementException e) {
-            console.printErr("Элемент не найден");
-            return 1;
+
         } catch (FileNotFoundException e) {
             console.printErr(e.getMessage());
+            ScannerManager.setScanner(new Scanner(System.in));
+            return 1;
+        } catch (NoSuchElementException e) {
+            console.printErr("Ошибка при работе с файлом: " + e.getMessage());
+            ScriptManager.removeFromStack();
+            ScannerManager.setScanner(new Scanner(System.in));
             return 1;
         }
-        return 0;
+        return 1;
     }
 
     @Override
     public String toString() {
         return " -> Считать и исполнить скрипт из указанного файла. "
-                 + "В скрипте содержатся команды в таком же виде, "
+                + "В скрипте содержатся команды в таком же виде, "
                 + "в котором их вводит пользователь в интерактивном режиме.";
     }
 }
