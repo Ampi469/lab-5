@@ -32,14 +32,14 @@ public class TicketCreate extends Create<Ticket> {
     public Ticket build() {
         return new Ticket(IdManager.createId(),
                 askString("Ticket.name",
-                        "(String, поле не может быть null)"
-                                + "строка не может быть пустой",
+                        "(String, поле не может быть null"
+                                + "строка не может быть пустой)",
                         s -> !s.isEmpty()),
                 askCoordinates(),
                 new Date(),
                 askInt("Ticket.price",
                         "(Integer, поле не может быть null,"
-                                + "значение поля должно быть больше нуля",
+                                + "значение поля должно быть больше нуля)",
                         integer -> (integer != null && integer > 0)),
                 askType(),
                 askPerson());
@@ -53,14 +53,14 @@ public class TicketCreate extends Create<Ticket> {
     public Ticket update(long id) {
         return new Ticket(id,
                 askString("Ticket.name",
-                        "(String, поле не может быть null)"
-                                + "строка не может быть пустой",
-                        String::isEmpty),
+                        "(String, поле не может быть null"
+                                + "строка не может быть пустой)",
+                        s -> !s.isEmpty()),
                 askCoordinates(),
                 new Date(),
                 askInt("Ticket.price",
                         "(Integer, поле не может быть null,"
-                                + "значение поля должно быть больше нуля",
+                                + "значение поля должно быть больше нуля)",
                         integer -> (integer != null && integer > 0)),
                 askType(),
                 askPerson());

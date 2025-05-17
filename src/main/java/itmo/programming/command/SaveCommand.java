@@ -17,8 +17,9 @@ public class SaveCommand implements BaseCommand {
      *
      * @param console console.
      */
-    public SaveCommand(ConsoleManager console) {
+    public SaveCommand(ConsoleManager console, FileManager fileManager) {
         this.console = console;
+        this.fileManager = fileManager;
     }
 
     /**

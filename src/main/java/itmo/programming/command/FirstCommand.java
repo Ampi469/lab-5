@@ -35,7 +35,7 @@ public class FirstCommand implements BaseCommand {
             console.printErr("Команда не принимает аргументы");
             return 1;
         }
-        if (collection.getCollection() == null) {
+        if (collection.getCollection() != null) {
             console.println("Первый элемент коллекции: "
                     + collection.firstElement());
             return 0;

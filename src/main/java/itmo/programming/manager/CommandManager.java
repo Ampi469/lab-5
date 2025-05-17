@@ -32,6 +32,13 @@ public class CommandManager {
     public static final String jsonPath = System.getenv("JSON_PATH");
 
     /**
+     * Геттер для jsonPath.
+     */
+    public static String getPath(){
+        return jsonPath;
+    }
+
+    /**
      * Environment variable - JAVA_PATH.
      * For test file.
      */
@@ -94,7 +101,7 @@ public class CommandManager {
                 new ClearCommand(console, collection));
 
         commandManager.addCommand("save",
-                new SaveCommand(console));
+                new SaveCommand(console, fileManager));
 
         commandManager.addCommand("execute_script",
                 new ExecuteScriptCommand(console, commandManager, fileManager));
@@ -130,6 +137,15 @@ public class CommandManager {
         return usedCommands;
     }
 
+    /**
+     * Изменить список использованных команд.
+     *
+     * @param usedCommands использованные команды
+     */
+    public  void setUsedCommands(ArrayList<String> usedCommands) {
+        this.usedCommands = usedCommands;
+    }
+
 
 
     /**
@@ -156,6 +172,7 @@ public class CommandManager {
             final int response = command.execute(args);
             final ArrayList<String> usedCommands = getUsedCommands();
             usedCommands.add(commandName);
+            setUsedCommands(usedCommands);
             return response;
         }
         consoleManager.println("Такой команды не существует!");

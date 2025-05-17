@@ -23,10 +23,10 @@ public class CoordinatesCreate extends Create<Coordinates> {
     @Override
     public Coordinates build() {
         return new Coordinates(askInt("Coordinate.coordinateX",
-                "(Integer, поле не может быть null",
+                "(Integer, поле не может быть null)",
                 Objects::nonNull),
                 askLong("Coordinate.coordinateY",
                         "(Long)",
-                        l -> true));
+                        l -> (true)));
     }
 }

@@ -10,8 +10,8 @@ import itmo.programming.model.create.TicketCreate;
  * Действие - вывести первый элемент в коллекции.
  */
 public class UpdateIdCommand implements BaseCommand {
-    ConsoleManager console;
-    CollectionManager collection;
+    private final ConsoleManager console;
+    private final CollectionManager collection;
 
     /**
      * Constrictor.
@@ -32,7 +32,7 @@ public class UpdateIdCommand implements BaseCommand {
      */
     @Override
     public int execute(String[] args) {
-        if (args.length != 0) {
+        if (args.length != 1) {
             console.printErr("Коллекция не принимает аргументы");
             return 1;
         }
@@ -49,9 +49,6 @@ public class UpdateIdCommand implements BaseCommand {
             }
         } catch (NumberFormatException e) {
             console.printErr("Неверный формат! Введите число (id)");
-            return 1;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            console.printErr("В коллекции нет ни одного элемента");
             return 1;
         }
     }

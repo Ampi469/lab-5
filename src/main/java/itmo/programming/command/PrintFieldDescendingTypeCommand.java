@@ -36,7 +36,7 @@ public class PrintFieldDescendingTypeCommand implements BaseCommand {
             return 1;
         }
         if (!(collection.getCollectionSize() == 0)) {
-            collection.orderedEnum();
+            collection.orderedEnum(collection);
             return 0;
         } else {
             console.printErr("Коллекция пуста");

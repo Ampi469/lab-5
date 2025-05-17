@@ -15,9 +15,14 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 
 /**
@@ -27,13 +32,11 @@ public class FileManager {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls()
             .registerTypeAdapter(LocalDateTime.class, new DateAdapter()).create();
     private final CollectionManager collection;
+    private final String envPath;
     private final ConsoleManager console;
-    private final String envPath = CommandManager.jsonPath;
 
     /**
      * Constrictor.
-     *
-     * @param envPath envPath.
      *
      * @param collection collection.
      *
@@ -42,6 +45,61 @@ public class FileManager {
     public FileManager(String envPath, CollectionManager collection, ConsoleManager console) {
         this.collection = collection;
         this.console = console;
+        this.envPath = envPath;
+    }
+
+    /**
+     * Метод для нахождения файла.
+     *
+     * @param fileName fileName.
+     */
+    public Optional<Path> findFile(String fileName) {
+        try {
+            /* 1. Ищем от текущей рабочей директории проекта */
+            Path startDir = Paths.get("").toAbsolutePath();
+            Optional<Path> found = searchRecursive(startDir, fileName);
+            if (found.isPresent()) {
+                return found;
+            }
+
+            /* 2. Не нашли — идём в каталог из переменной окружения */
+            String envPath = System.getenv("SCRIPTS_PATH");      // придумайте своё имя
+            if (envPath != null && !envPath.isBlank()) {
+                Path envDir = Paths.get(envPath);
+                if (Files.isDirectory(envDir)) {
+                    found = searchRecursive(envDir, fileName);
+                    if (found.isPresent()) {
+                        return found;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // логи / вывод в консоль — на ваш вкус
+            System.err.println("Ошибка при поиске файла: " + e.getMessage());
+        }
+
+        /* 3. Так и не нашли */
+        return Optional.empty();
+    }
+
+    /**
+     * Вспомогательный метод для нахождения файла.
+     *
+     * @param root root.
+     *
+     * @param fileName fileName.
+     *
+     * @throws IOException IOException.
+     */
+    private Optional<Path> searchRecursive(Path root, String fileName) throws IOException {
+        try (Stream<Path> stream = Files.find(
+                root,
+                Integer.MAX_VALUE,                                   // глубина = без ограничений
+                (path, attrs) -> attrs.isRegularFile()
+                        && path.getFileName().toString().equals(fileName))) {
+
+            return stream.findFirst().map(Path::toAbsolutePath);
+        }
     }
 
     /**
@@ -54,18 +112,22 @@ public class FileManager {
     public boolean canReadFile(File file, ConsoleManager console) {
         if (!file.exists()) {
             console.printErr("Файл не найден");
+            System.exit(1);
             return false;
         }
         if (!file.canRead()) {
             console.printErr("Файл не может быть прочитан");
+            System.exit(1);
             return false;
         }
         if (file.isHidden()) {
             console.printErr("Файл скрыт");
+            System.exit(1);
             return false;
         }
         if (!file.isFile()) {
             console.printErr("Это не файл");
+            System.exit(1);
             return false;
         }
         return true;
@@ -88,7 +150,7 @@ public class FileManager {
 
         if (file.exists()) {
             try (BufferedOutputStream bufferedOutputStream =
-                         new BufferedOutputStream(new FileOutputStream(file))) {
+                         new BufferedOutputStream(new FileOutputStream(envPath  ))) {
 
                 bufferedOutputStream.write(gson.toJson(currentCollection).getBytes());
                 console.println("Коллекция успешно записана в файл " + envPath);
@@ -111,7 +173,7 @@ public class FileManager {
      */
     public void readCollection(CollectionManager collection) {
 
-        if (envPath != null) {
+            if (envPath != null) {
             try (BufferedReader bufferedReader = new BufferedReader(new FileReader(envPath));
                  Scanner fileScanner = new Scanner(bufferedReader)) {
 
@@ -125,7 +187,7 @@ public class FileManager {
                 if (jsonString.isEmpty()) {
                     jsonString = new StringBuilder("[]");
                 }
-                if ("[]".contentEquals(jsonString)) {
+                if (jsonString.toString().equals("[]")) {
                     console.printWarning("Коллекция в файле пуста!");
                 }
 

@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "Vladislav",
+    "coordinates": {
+      "coordinatesX": 123,
+      "coordinatesY": 54
+    },
+    "creationDate": "May 17, 2025, 8:02:35 PM",
+    "price": 6000,
+    "ticketType": "CHEAP",
+    "person": {
+      "height": 78,
+      "weight": 454.0,
+      "passportId": "456789"
+    }
+  }
+]

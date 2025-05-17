@@ -25,13 +25,12 @@ public class PersonCreate extends Create<Person> {
     public Person build() {
         return new Person(askLong("Person.height",
                 "(Long, поле должно быть больше нуля)",
-                l -> (l > 0)),
+                l -> (l != null && l > 0)),
                 askDouble("Person.weight",
                         "(Double, поле должно быть больше нуля)",
-                        d -> (d > 0)),
+                        d -> (d != null && d > 0)),
                 askString("Person.passportID",
-                        "(String, поле должно быть уникальным,"
-                                + "не может быть пустым",
+                        "(String, не может быть пустым)",
                         s -> {
                             if (s.isEmpty()) {
                                 return false;

@@ -38,7 +38,9 @@ public class RemoveLowerCommand implements BaseCommand {
         }
         if (collection.getCollectionSize() != 0) {
             final Ticket ticket = new TicketCreate(console).build();
-            collection.removeLower(ticket);
+            collection.removeLower(collection, ticket);
+            console.print("Все элементы ниже заданного удалены!\n");
+
         } else {
             console.printErr("коллекция пуста");
         }

@@ -38,7 +38,8 @@ public class RemoveGreaterCommand implements BaseCommand {
         }
         if (collection.getCollectionSize() != 0) {
             final Ticket ticket = new TicketCreate(console).build();
-            collection.removeGreater(ticket);
+            collection.removeGreater(collection, ticket);
+            console.print("Все элементы выше заданного удалены!\n");
         } else {
             console.printErr("коллекция пуста");
         }

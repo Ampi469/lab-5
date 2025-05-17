@@ -30,7 +30,7 @@ public class CollectionManager {
      * Коллекция.
      */
     private final PriorityQueue<Ticket> collection = new PriorityQueue<>(
-            Comparator.comparingLong(Ticket::getId)
+            Comparator.comparingDouble(Ticket::getSumPersonElement)
     );
 
     /**
@@ -92,16 +92,13 @@ public class CollectionManager {
      * Метод для вывода элементов коллекции.
      * В порядке возрастания их типов.
      */
-    public void orderedEnum() {
-        final CollectionManager collectionManager
-                = new CollectionManager();
+    public void orderedEnum(CollectionManager manager) {
         final TicketType[] orderedTypes = { TicketType
                 .VIP, TicketType
                 .USUAL, TicketType
                 .BUDGETARY, TicketType
                 .CHEAP };
-        final List<Ticket> tickets = new ArrayList<>(collectionManager.getCollection());
-        tickets.addAll(collectionManager.getCollection());
+        final List<Ticket> tickets = new ArrayList<>(manager.getCollection());
         for (TicketType type : orderedTypes) {
             System.out.println("Элементы типа: " + type);
             tickets.stream()
@@ -131,7 +128,7 @@ public class CollectionManager {
                 collectionString.append("\n");
             }
         } else {
-            collectionString = new StringBuilder("Нечего выводить...\n");
+            collectionString = new StringBuilder("Пусто!\n");
         }
         return collectionString.toString();
     }
@@ -141,28 +138,13 @@ public class CollectionManager {
      *
      * @param ticket билет.
      */
-    public String removeLower(Ticket ticket) {
+    public void removeLower(CollectionManager collectionManager, Ticket ticket) {
 
-        final List<Long> keys = new ArrayList<>(models.keySet());
-        Collections.sort(keys);
-
-        long expected = keys.get(0);
-        Long freeSpot = null;
-
-        for (Long key : keys) {
-            if (!key.equals(expected)) {
-                freeSpot = key;
-                break;
+        for (Ticket t : collectionManager.getCollection()) {
+            if (t.getSumPersonElement() > ticket.getSumPersonElement()) {
+                collection.remove(t);
             }
-            expected++;
         }
-        if (freeSpot != null) {
-            final Long finalFreeSpot = freeSpot;
-            models.entrySet().removeIf(entry -> entry.getKey() < finalFreeSpot);
-            return "Все элементы ниже заданного были удалены!";
-        }
-        return "Удалите один элемент из коллекции"
-                + " чтобы исполнить команду! ";
     }
 
     /**
@@ -187,28 +169,13 @@ public class CollectionManager {
      *
      * @param ticket билет.
      */
-    public String removeGreater(Ticket ticket) {
+    public void removeGreater(CollectionManager collectionManager, Ticket ticket) {
 
-        final List<Long> keys = new ArrayList<>(models.keySet());
-        Collections.sort(keys);
-
-        long expected = keys.get(0);
-        Long freeSpot = null;
-
-        for (Long key : keys) {
-            if (!key.equals(expected)) {
-                freeSpot = key;
-                break;
+        for (Ticket t : collectionManager.getCollection()) {
+            if (t.getSumPersonElement() < ticket.getSumPersonElement()) {
+                collection.remove(t);
             }
-            expected++;
         }
-        if (freeSpot != null) {
-            final Long finalFreeSpot = freeSpot;
-            models.entrySet().removeIf(entry -> entry.getKey() > finalFreeSpot);
-            return "Все элементы выше заданного были удалены!";
-        }
-        return "Удалите один элемент из коллекции"
-                + " чтобы исполнить команду! ";
     }
 
     /**

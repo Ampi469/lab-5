@@ -14,7 +14,7 @@ public class Main {
         final ConsoleManager console = new ConsoleManager();
         final CollectionManager collection = new CollectionManager();
         final CommandManager commandManager = new CommandManager(console);
-        final String envPath = CommandManager.envPath;
+        final String envPath = CommandManager.getPath();
         final FileManager fileManager = new FileManager(envPath, collection, console);
         IdManager.setCollectionManager(collection);
         commandManager.commands(fileManager, console, commandManager, collection);

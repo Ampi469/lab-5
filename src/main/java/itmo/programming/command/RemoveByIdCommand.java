@@ -30,7 +30,7 @@ public class RemoveByIdCommand implements BaseCommand {
      */
     @Override
     public int execute(String[] args) {
-        if (args.length != 0) {
+        if (args.length != 1) {
             console.printErr("Команда не принимает аргументы");
             return 1;
         }
