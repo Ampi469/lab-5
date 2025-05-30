@@ -25,38 +25,16 @@ import java.util.HashMap;
  */
 public class CommandManager {
 
-    /**
-     * Environment variable - JSON_PATH.
-     * For json file.
-     */
+    // Статические поля должны быть в начале класса
     public static final String jsonPath = System.getenv("JSON_PATH");
-
-    /**
-     * Геттер для jsonPath.
-     */
-    public static String getPath(){
-        return jsonPath;
-    }
-
-    /**
-     * Environment variable - JAVA_PATH.
-     * For test file.
-     */
     public static final String envPath = System.getenv("JAVA_PATH");
 
-    /**
-     * Hash-словарь.
-     * Название команды - Объект команды, реализующий интерфейс.
-     */
+    // Нестатические поля далее
     private final HashMap<String, BaseCommand> commands = new HashMap<>();
-
     private final ConsoleManager consoleManager;
-
-    /**
-     * Список использованных команд в порядке времени использования.
-     */
     private ArrayList<String> usedCommands = new ArrayList<>();
 
+    // Конструкторы идут после полей
     /**
      * Конструктор.
      *
@@ -66,64 +44,54 @@ public class CommandManager {
         this.consoleManager = consoleManager;
     }
 
+    // Методы класса
+    /**
+     * Геттер для jsonPath.
+     */
+    public static String getPath() {
+        return jsonPath;
+    }
+
     /**
      * Все доступные команды.
      *
      * @param fileManager fileManager.
-     *
      * @param console console.
-     *
      * @param commandManager commandManager.
-     *
      * @param collection collection.
      */
     public void commands(FileManager fileManager, ConsoleManager console,
                          CommandManager commandManager, CollectionManager collection) {
         commandManager.addCommand("help",
                 new HelpCommand(console, commandManager));
-
         commandManager.addCommand("info",
                 new InfoCommand(console, collection));
-
         commandManager.addCommand("show",
                 new ShowCommand(console, collection));
-
         commandManager.addCommand("add",
                 new AddCommand(console, collection));
-
         commandManager.addCommand("update",
                 new UpdateIdCommand(console, collection));
-
         commandManager.addCommand("remove_by_id",
                 new RemoveByIdCommand(console, collection));
-
         commandManager.addCommand("clear",
                 new ClearCommand(console, collection));
-
         commandManager.addCommand("save",
                 new SaveCommand(console, fileManager));
-
         commandManager.addCommand("execute_script",
                 new ExecuteScriptCommand(console, commandManager, fileManager));
-
         commandManager.addCommand("exit",
                 new ExitCommand(console));
-
         commandManager.addCommand("first_element",
                 new FirstCommand(console, collection));
-
         commandManager.addCommand("max_person",
                 new MaxByPersonCommand(console, collection));
-
         commandManager.addCommand("min_coordinates",
                 new MinByCoordinateCommand(console, collection));
-
         commandManager.addCommand("order_type",
                 new PrintFieldDescendingTypeCommand(console, collection));
-
         commandManager.addCommand("remove_lower",
                 new RemoveLowerCommand(console, collection));
-
         commandManager.addCommand("remove_greater",
                 new RemoveGreaterCommand(console, collection));
 
@@ -142,17 +110,14 @@ public class CommandManager {
      *
      * @param usedCommands использованные команды
      */
-    public  void setUsedCommands(ArrayList<String> usedCommands) {
+    public void setUsedCommands(ArrayList<String> usedCommands) {
         this.usedCommands = usedCommands;
     }
-
-
 
     /**
      * Добавить команду в Hash-словарь с командами.
      *
      * @param commandName commandName.
-     *
      * @param command command.
      */
     public void addCommand(String commandName, BaseCommand command) {
@@ -163,7 +128,6 @@ public class CommandManager {
      * Исполнение команды и ее результат.
      *
      * @param commandName commandName.
-     *
      * @param args args.
      */
     public int executeCommand(String commandName, String[] args) {

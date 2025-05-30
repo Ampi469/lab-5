@@ -3,11 +3,9 @@ package itmo.programming.manager;
 import itmo.programming.model.Ticket;
 import itmo.programming.model.TicketType;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -24,7 +22,6 @@ public class CollectionManager {
      * Hash-словарь для быстрого доступа по ID к объектам модели.
      */
     private final HashMap<Long, Ticket> models = new HashMap<>();
-
 
     /**
      * Коллекция.
@@ -50,7 +47,6 @@ public class CollectionManager {
      * Обновить по значению ID.
      *
      * @param id id.
-     *
      * @param ticket билет.
      */
     public boolean updateById(Long id, Ticket ticket) {
@@ -98,7 +94,7 @@ public class CollectionManager {
                 .USUAL, TicketType
                 .BUDGETARY, TicketType
                 .CHEAP };
-        final List<Ticket> tickets = new ArrayList<>(manager.getCollection());
+        final ArrayList<Ticket> tickets = new ArrayList<>(manager.getCollection());
         for (TicketType type : orderedTypes) {
             System.out.println("Элементы типа: " + type);
             tickets.stream()
@@ -106,7 +102,6 @@ public class CollectionManager {
                     .sorted(Comparator.comparing(Ticket::getId))
                     .forEach(System.out::println);
             System.out.println();
-
         }
     }
 
@@ -139,7 +134,6 @@ public class CollectionManager {
      * @param ticket билет.
      */
     public void removeLower(CollectionManager collectionManager, Ticket ticket) {
-
         for (Ticket t : collectionManager.getCollection()) {
             if (t.getSumPersonElement() > ticket.getSumPersonElement()) {
                 collection.remove(t);
@@ -170,7 +164,6 @@ public class CollectionManager {
      * @param ticket билет.
      */
     public void removeGreater(CollectionManager collectionManager, Ticket ticket) {
-
         for (Ticket t : collectionManager.getCollection()) {
             if (t.getSumPersonElement() < ticket.getSumPersonElement()) {
                 collection.remove(t);
@@ -220,5 +213,4 @@ public class CollectionManager {
     public String getTypeOfCollections() {
         return collection.getClass().getTypeName();
     }
-
 }

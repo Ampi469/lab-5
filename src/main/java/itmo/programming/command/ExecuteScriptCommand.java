@@ -1,7 +1,10 @@
 package itmo.programming.command;
 
-import itmo.programming.manager.*;
-
+import itmo.programming.manager.CommandManager;
+import itmo.programming.manager.ConsoleManager;
+import itmo.programming.manager.FileManager;
+import itmo.programming.manager.ScannerManager;
+import itmo.programming.manager.ScriptManager;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -18,14 +21,11 @@ public class ExecuteScriptCommand implements BaseCommand {
     final CommandManager commandManager;
     final FileManager fileManager;
 
-
     /**
      * Конструктор.
      *
      * @param console console.
-     *
      * @param commandManager commandMтa manager.
-     *
      * @param fileManager fileManager.
      */
     public ExecuteScriptCommand(ConsoleManager console,
@@ -50,11 +50,11 @@ public class ExecuteScriptCommand implements BaseCommand {
         }
 
         final String fileName = args[0];
-        String SCRIPTS_DIR = "src/main/java/itmo/programming/tests";
-        File file = new File(SCRIPTS_DIR, fileName);
+        final String scriptsDir = "src/main/java/itmo/programming/tests";
+        File file = new File(scriptsDir, fileName);
 
         if (!file.exists()) {
-            String envPath = System.getenv("JAVA_PATH");
+            final String envPath = System.getenv("JAVA_PATH");
             if (envPath == null) {
                 console.printErr("Файл не найден и переменная "
                         + "окружения JAVA_PATH не установлена.");
@@ -73,7 +73,7 @@ public class ExecuteScriptCommand implements BaseCommand {
         try {
             ScriptManager.addToStack(file.getAbsolutePath());
             ScannerManager.setScanner(new Scanner(file));
-            Scanner scannerManager = ScriptManager.getLastScanner();
+            final Scanner scannerManager = ScriptManager.getLastScanner();
 
             if (scannerManager == null) {
                 ScriptManager.removeFromStack();
@@ -82,31 +82,39 @@ public class ExecuteScriptCommand implements BaseCommand {
                 return 1;
             }
 
-                ScannerManager.setScanner(scannerManager);
-                while (scannerManager.hasNextLine()) {
-                    final String line = scannerManager.nextLine();
-                    final String[] command = line.trim().split(" ");
-                    if (command[0].equalsIgnoreCase("execute_script")
-                            && ScriptManager.isRecursive(command[1])) {
+            ScannerManager.setScanner(scannerManager);
+            while (scannerManager.hasNextLine()) {
+                final String line = scannerManager.nextLine();
+                final String[] command = line.trim().split(" ");
+                if (command[0].equalsIgnoreCase("execute_script")
+                        && command.length > 1) {
+                    File nextScriptFile = new File(scriptsDir, command[1]);
+                    if (!nextScriptFile.exists()) {
+                        nextScriptFile = new File(command[1]);
+                    }
+                    final String absPath = nextScriptFile.getAbsolutePath(); // объявлено final
+                    if (ScriptManager.isRecursive(absPath)) {
                         console.printErr("Найдена рекурсия! Повторно вызывается файл: " + new File(
                                 command[1]).getAbsolutePath());
                         continue;
                     }
-                    if (!(Objects.equals(command[0], ""))) {
-                        console.println("Выполнение команды " + command[0] + " (" + fileName + "):");
-                        if (commandManager.getCommands().get(command[0]) != null) {
-                            final var statusCode = commandManager.executeCommand(command[0],
-                                    Arrays.copyOfRange(command, 1, command.length));
-                            if (statusCode != 0) {
-                                ScriptManager.removeFromStack();
-                                return statusCode;
-                            }
-                        } else {
-                            console.printErr("Такой команды нет");
-                            return 1;
+                }
+
+                if (!(Objects.equals(command[0], ""))) {
+                    console.println("Выполнение команды " + command[0] + " (" + fileName + "):");
+                    if (commandManager.getCommands().get(command[0]) != null) {
+                        final var statusCode = commandManager.executeCommand(command[0],
+                                Arrays.copyOfRange(command, 1, command.length));
+                        if (statusCode != 0) {
+                            ScriptManager.removeFromStack();
+                            return statusCode;
                         }
+                    } else {
+                        console.printErr("Такой команды нет");
+                        return 1;
                     }
                 }
+            }
             ScriptManager.removeFromStack();
             ScannerManager.setScanner(new Scanner(System.in));
 
@@ -125,7 +133,7 @@ public class ExecuteScriptCommand implements BaseCommand {
     @Override
     public String toString() {
         return " -> Считать и исполнить скрипт из указанного файла. "
-                 + "В скрипте содержатся команды в таком же виде, "
+                + "В скрипте содержатся команды в таком же виде, "
                 + "в котором их вводит пользователь в интерактивном режиме.";
     }
 }

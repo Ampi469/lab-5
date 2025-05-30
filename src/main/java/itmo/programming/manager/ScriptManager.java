@@ -28,7 +28,8 @@ public class ScriptManager {
      * @param path относительный путь к файлу.
      */
     public static boolean isRecursive(String path) {
-        return pathStack.contains(new File(path).getAbsolutePath());
+        final String absolutePath = new File(path).getAbsolutePath();
+        return pathStack.contains(absolutePath);
     }
 
     /**

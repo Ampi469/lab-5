@@ -1,12 +1,28 @@
 [
   {
-    "id": 1,
+    "id": 3,
+    "name": "1",
+    "coordinates": {
+      "coordinatesX": 1,
+      "coordinatesY": 1
+    },
+    "creationDate": "May 30, 2025, 10:43:53 PM",
+    "price": 1,
+    "ticketType": "VIP",
+    "person": {
+      "height": 1,
+      "weight": 1.0,
+      "passportId": "1"
+    }
+  },
+  {
+    "id": 4,
     "name": "Vladislav",
     "coordinates": {
       "coordinatesX": 123,
       "coordinatesY": 54
     },
-    "creationDate": "May 17, 2025, 8:02:35 PM",
+    "creationDate": "May 30, 2025, 10:45:40 PM",
     "price": 6000,
     "ticketType": "CHEAP",
     "person": {
