@@ -54,22 +54,18 @@ public class FileManager {
     public boolean canReadFile(File file, ConsoleManager console) {
         if (!file.exists()) {
             console.printErr("Файл не найден");
-            System.exit(1);
             return false;
         }
         if (!file.canRead()) {
             console.printErr("Файл не может быть прочитан");
-            System.exit(1);
             return false;
         }
         if (file.isHidden()) {
             console.printErr("Файл скрыт");
-            System.exit(1);
             return false;
         }
         if (!file.isFile()) {
             console.printErr("Это не файл");
-            System.exit(1);
             return false;
         }
         return true;
@@ -148,7 +144,14 @@ public class FileManager {
                                 && ValidationManager.isValidCoordinates(ticket)
                                 && ValidationManager.isValidPerson(ticket)
                                 && ValidationManager.isValidEnum(ticket)) {
-                            collection.add(ticket);
+                            if (collection.isExist(ticket)) {
+                                console.println("Внимание!!! Повторяющийся ID: "
+                                        + ticket.getId() + ". "
+                                        + "Элемент  именем - " + ticket.getName()
+                                        +  " не был добавлен в коллекцию.");
+                            } else {
+                                collection.add(ticket);
+                            }
                         } else {
                             console.printErr(
                                     "В файле содержится коллекция в недопустимом формате!"

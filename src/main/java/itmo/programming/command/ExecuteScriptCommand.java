@@ -13,8 +13,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 /**
- * Команда - execute_script.
- * Действие - Считать и исполнить скрипт из указанного файла.
+ * Класс для реализации чтения скрипта.
  */
 public class ExecuteScriptCommand implements BaseCommand {
     final ConsoleManager console;
@@ -25,7 +24,7 @@ public class ExecuteScriptCommand implements BaseCommand {
      * Конструктор.
      *
      * @param console console.
-     * @param commandManager commandMтa manager.
+     * @param commandManager commandManager.
      * @param fileManager fileManager.
      */
     public ExecuteScriptCommand(ConsoleManager console,
@@ -36,33 +35,26 @@ public class ExecuteScriptCommand implements BaseCommand {
         this.fileManager = fileManager;
     }
 
-    /**
-     * Исполнение.
-     *
-     * @param args args.
-     */
     @Override
     public int execute(String[] args) {
-
         if (args.length == 0) {
             console.printErr("Укажите название файла");
             return 1;
         }
 
         final String fileName = args[0];
-        final String scriptsDir = "src/main/java/itmo/programming/tests";
-        File file = new File(scriptsDir, fileName);
-
-        if (!file.exists()) {
+        File file = findFile(new File("src"), fileName);
+        if (file == null || !file.exists()) {
             final String envPath = System.getenv("JAVA_PATH");
             if (envPath == null) {
-                console.printErr("Файл не найден и переменная "
-                        + "окружения JAVA_PATH не установлена.");
+                console.printErr("Файл не найден в "
+                        + "src и переменная окружения "
+                        + "JAVA_PATH не установлена.");
                 return 1;
             } else {
                 file = new File(envPath);
-                console.print("Файл не найден по имени, используется"
-                        + " файл из JAVA_PATH: " + file.getAbsolutePath());
+                console.println("Файл не найден в src, "
+                        + "используется файл из JAVA_PATH: " + file.getAbsolutePath());
             }
         }
 
@@ -86,21 +78,19 @@ public class ExecuteScriptCommand implements BaseCommand {
             while (scannerManager.hasNextLine()) {
                 final String line = scannerManager.nextLine();
                 final String[] command = line.trim().split(" ");
-                if (command[0].equalsIgnoreCase("execute_script")
-                        && command.length > 1) {
-                    File nextScriptFile = new File(scriptsDir, command[1]);
-                    if (!nextScriptFile.exists()) {
+                if (command[0].equalsIgnoreCase("execute_script") && command.length > 1) {
+                    File nextScriptFile = findFile(new File("src"), command[1]);
+                    if (nextScriptFile == null || !nextScriptFile.exists()) {
                         nextScriptFile = new File(command[1]);
                     }
-                    final String absPath = nextScriptFile.getAbsolutePath(); // объявлено final
+                    final String absPath = nextScriptFile.getAbsolutePath();
                     if (ScriptManager.isRecursive(absPath)) {
-                        console.printErr("Найдена рекурсия! Повторно вызывается файл: " + new File(
-                                command[1]).getAbsolutePath());
+                        console.printErr("Найдена рекурсия! Повторно вызывается файл: " + absPath);
                         continue;
                     }
                 }
 
-                if (!(Objects.equals(command[0], ""))) {
+                if (!Objects.equals(command[0], "")) {
                     console.println("Выполнение команды " + command[0] + " (" + fileName + "):");
                     if (commandManager.getCommands().get(command[0]) != null) {
                         final var statusCode = commandManager.executeCommand(command[0],
@@ -130,10 +120,34 @@ public class ExecuteScriptCommand implements BaseCommand {
         return 0;
     }
 
+    /**
+     * Рекурсивный поиск файла с заданным именем в указанной директории.
+     *
+     * @param directory директория для поиска
+     * @param fileName  имя файла для поиска
+     * @return найденный файл или null, если файл не найден
+     */
+    private File findFile(File directory, String fileName) {
+        if (directory.isDirectory()) {
+            final File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        final File found = findFile(file, fileName);
+                        if (found != null) {
+                            return found;
+                        }
+                    } else if (file.getName().equals(fileName)) {
+                        return file;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
-        return " -> Считать и исполнить скрипт из указанного файла. "
-                + "В скрипте содержатся команды в таком же виде, "
-                + "в котором их вводит пользователь в интерактивном режиме.";
+        return " -> Считать и исполнить скрипт из указанного файла.";
     }
 }
