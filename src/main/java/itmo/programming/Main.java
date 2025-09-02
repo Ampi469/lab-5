@@ -1,39 +1,24 @@
 package itmo.programming;
 
-import java.util.Arrays;
-import java.util.List;
+import itmo.programming.manager.CollectionManager;
+import itmo.programming.manager.CommandManager;
+import itmo.programming.manager.ConsoleManager;
+import itmo.programming.manager.FileManager;
+import itmo.programming.manager.IdManager;
 
 /**
  * Class main.
  */
 public class Main {
     public static void main(String[] args) {
-//        final ConsoleManager console = new ConsoleManager();
-//        final CollectionManager collection = new CollectionManager();
-//        final CommandManager commandManager = new CommandManager(console);
-//        final String envPath = CommandManager.getPath();
-//        final FileManager fileManager = new FileManager(envPath, collection, console);
-//        IdManager.setCollectionManager(collection);
-//        commandManager.commands(fileManager, console, commandManager, collection);
-        List<String> name = Arrays.asList("programming", "love");
-        List<Integer> age = Arrays.asList(20, 30);
-
-        WildCard.getWildCardElement(name);
-        WildCard.getWildCardElement(age);
+        final ConsoleManager console = new ConsoleManager();
+        final CollectionManager collection = new CollectionManager();
+        final CommandManager commandManager = new CommandManager(console);
+        final String envPath = CommandManager.getPath();
+        final FileManager fileManager = new FileManager(envPath, collection, console);
+        IdManager.setCollectionManager(collection);
+        commandManager.commands(fileManager, console, commandManager, collection);
 
     }
-
-    public class WildCard {
-        public static void getWildCardElement(List<?> list) {
-            for (Object o : list) {
-                System.out.println(o);
-            }
-        }
-
-        public <T> T Type(T value){
-            return value;
-        }
-    }
-
 }
 
