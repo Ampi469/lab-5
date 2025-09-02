@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"itmo.programming"},{"l":"itmo.programming.command"},{"l":"itmo.programming.date"},{"l":"itmo.programming.manager"},{"l":"itmo.programming.model"},{"l":"itmo.programming.model.create"}];updateSearchResults();
